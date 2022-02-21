@@ -1,12 +1,18 @@
 from http import HTTPStatus
 from app.models.leads_model import LeadsModel
 from flask import request, current_app, jsonify
-
+from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError
 from psycopg2.errors import UniqueViolation
 
 def select_all():
-    pass
+    base_query = current_app.db.session.query(LeadsModel).order_by(desc('last_visit'))
+    leads = base_query.all()
+
+    if not leads:
+        return dict(error="Data not found!"), HTTPStatus.NOT_FOUND
+
+    return jsonify(leads), HTTPStatus.OK
 
 def create():
     try:
