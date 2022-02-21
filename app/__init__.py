@@ -7,6 +7,6 @@ def create_app():
 
     database.init_app(app)
     migrations.init_app(app)
-    #routes.init_app(app)
+    routes.init_app(app)
 
     return app
