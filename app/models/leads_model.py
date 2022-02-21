@@ -37,10 +37,3 @@ class LeadsModel(db.Model):
             return phone_to_be_tested
         else:
             raise ValueError("Invalid phone format!")
-
-    @staticmethod
-    def update_lead(lead):
-        lead.last_visit = dt.now()
-        lead.visits = lead.visits + 1
-
-        return lead

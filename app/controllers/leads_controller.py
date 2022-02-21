@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from datetime import datetime as dt
 from app.models.leads_model import LeadsModel
 from flask import request, current_app, jsonify
 
@@ -7,7 +8,7 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 from psycopg2.errors import UniqueViolation
 
 def select_all():
-    base_query = current_app.db.session.query(LeadsModel).order_by(desc('last_visit'))
+    base_query = current_app.db.session.query(LeadsModel).order_by(desc('visits'))
     leads = base_query.all()
 
     if not leads:
@@ -47,8 +48,8 @@ def update():
         base_query = current_app.db.session.query(LeadsModel)
         
         lead = base_query.filter_by(email=email).one()
-
-        lead = LeadsModel.update_lead(lead)
+        lead.last_visit = dt.now()
+        lead.visits = lead.visits + 1
     
         for key, value in data.items():
             setattr(lead, key, value.lower())
@@ -79,7 +80,7 @@ def delete():
         current_app.db.session.delete(lead)
         current_app.db.session.commit()
 
-        return jsonify(lead), HTTPStatus.OK
+        return jsonify(lead), HTTPStatus.NO_CONTENT
     
     except NoResultFound:
         return dict(error="email not found"), HTTPStatus.NOT_FOUND
