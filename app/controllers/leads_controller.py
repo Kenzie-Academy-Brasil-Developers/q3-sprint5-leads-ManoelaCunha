@@ -67,3 +67,25 @@ def update():
     except AttributeError:
         return dict(error='The value must be a string!'), HTTPStatus.BAD_REQUEST
 
+def delete():
+    try:
+        data = request.get_json()
+        email = data['email'].lower()
+    
+        base_query = current_app.db.session.query(LeadsModel)
+            
+        lead = base_query.filter_by(email=email).one()
+
+        current_app.db.session.delete(lead)
+        current_app.db.session.commit()
+
+        return jsonify(lead), HTTPStatus.OK
+    
+    except NoResultFound:
+        return dict(error="email not found"), HTTPStatus.NOT_FOUND
+
+    except KeyError as e:
+        return dict(error=f"Missing key '{e.args[0]}'"), HTTPStatus.BAD_REQUEST
+
+    except AttributeError:
+        return dict(error='The value must be a string!'), HTTPStatus.BAD_REQUEST

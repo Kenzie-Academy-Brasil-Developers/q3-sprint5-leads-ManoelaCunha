@@ -8,3 +8,5 @@ bp.get("")(leads_controller.select_all)
 bp.post("")(leads_controller.create)
 
 bp.patch("")(leads_controller.update)
+
+bp.delete("")(leads_controller.delete)
