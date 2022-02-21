@@ -6,3 +6,5 @@ bp = Blueprint("leads", __name__, url_prefix="/leads")
 bp.get("")(leads_controller.select_all)
 
 bp.post("")(leads_controller.create)
+
+bp.patch("")(leads_controller.update)

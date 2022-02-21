@@ -28,7 +28,7 @@ class LeadsModel(db.Model):
         self.name = kwargs['name'].title()
         self.email = kwargs['email'].lower()
         self.phone = kwargs['phone']
-        
+     
     @validates("phone")
     def validate_phone(self, _, phone_to_be_tested):
         phone_is_valid = re.fullmatch("^\([1-9]{2}\)[9]{0,1}[0-9]{1}[0-9]{3}\-[0-9]{4}$", phone_to_be_tested)
@@ -37,3 +37,10 @@ class LeadsModel(db.Model):
             return phone_to_be_tested
         else:
             raise ValueError("Invalid phone format!")
+
+    @staticmethod
+    def update_lead(lead):
+        lead.last_visit = dt.now()
+        lead.visits = lead.visits + 1
+
+        return lead
