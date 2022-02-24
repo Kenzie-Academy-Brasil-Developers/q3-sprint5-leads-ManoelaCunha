@@ -1,11 +1,14 @@
 from http import HTTPStatus
 from datetime import datetime as dt
-from app.models.leads_model import LeadsModel
 from flask import request, current_app, jsonify
 
 from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError, NoResultFound
+
 from psycopg2.errors import UniqueViolation
+
+from app.models.leads_model import LeadsModel
+from app.services.decorators import verify_keys
 
 def select_all():
     base_query = current_app.db.session.query(LeadsModel).order_by(desc('visits'))
@@ -16,6 +19,7 @@ def select_all():
 
     return jsonify(leads), HTTPStatus.OK
 
+@verify_keys(['name', 'email', 'phone'])
 def create():
     try:
         data = request.get_json()
@@ -30,9 +34,6 @@ def create():
     except ValueError as e:
         return dict(error=''.join(e.args)), HTTPStatus.BAD_REQUEST
 
-    except KeyError as e:
-        return dict(error=f"Missing key '{e.args[0]}'"), HTTPStatus.BAD_REQUEST
-
     except (AttributeError, TypeError):
         return dict(error='The value must be a string!'), HTTPStatus.BAD_REQUEST
 
@@ -40,11 +41,16 @@ def create():
         if isinstance(e.orig, UniqueViolation):
             return dict(error=' '.join(e.orig.pgerror.split()[9:])), HTTPStatus.CONFLICT
 
+@verify_keys(['email'])
 def update():
     try:
         data = request.get_json()
         email = data['email'].lower()
-  
+
+        for key in data.keys():
+            if key != 'email':
+                raise KeyError
+        
         base_query = current_app.db.session.query(LeadsModel)
         
         lead = base_query.filter_by(email=email).one()
@@ -62,16 +68,18 @@ def update():
     except NoResultFound:
         return dict(error="email not found"), HTTPStatus.NOT_FOUND
 
-    except KeyError as e:
-        return dict(error=f"Missing key '{e.args[0]}'"), HTTPStatus.BAD_REQUEST
-
     except AttributeError:
         return dict(error='The value must be a string!'), HTTPStatus.BAD_REQUEST
 
+@verify_keys(['email'])
 def delete():
     try:
         data = request.get_json()
         email = data['email'].lower()
+
+        for key in data.keys():
+            if key != 'email':
+                raise KeyError
     
         base_query = current_app.db.session.query(LeadsModel)
             
@@ -84,9 +92,6 @@ def delete():
     
     except NoResultFound:
         return dict(error="email not found"), HTTPStatus.NOT_FOUND
-
-    except KeyError as e:
-        return dict(error=f"Missing key '{e.args[0]}'"), HTTPStatus.BAD_REQUEST
 
     except AttributeError:
         return dict(error='The value must be a string!'), HTTPStatus.BAD_REQUEST
