@@ -8,11 +8,15 @@ Essa aplicação tem como objetivo realizar o controle de **Leads**.
 
 ## Endpoints
 
-A API possui 1 endpoint - _/leads_ - e 4 rotas - _POST / GET / PATCH / DELETE_ - onde é possível **registrar** um novo **Lead** no banco de dados, **listar** todos os **Leads** por **ordem de visitas**, **atualizar** o registro de **visitas** de um **Lead** e **deletar** um **Lead** específico.
+A API possui:
+1 endpoint - **_/leads_**
+4 rotas - **_POST / GET / PATCH / DELETE_**
+
+Onde é possível **registrar** um novo **Lead** no banco de dados, **listar** todos os **Leads** por **ordem de visitas**, **atualizar** o registro de **visitas** de um **Lead** e **deletar** um **Lead** específico.
 
 O url base da API é
 
-### POST
+## POST
 
 **Registrando um novo Lead**
 
@@ -39,7 +43,7 @@ O url base da API é
 }
 ```
 
-### GET
+## GET
 
 **Listando Leads**
 
@@ -66,7 +70,7 @@ O url base da API é
 ];
 ```
 
-### PATCH
+## PATCH
 
 **Atualizando registro de visitas de um Lead**
 
@@ -84,7 +88,7 @@ _Corpo da requisição obrigatoriamente apenas com ***email***_
 
 No body returned for response
 
-### DELETE
+## DELETE
 
 **Deletando um Lead específico**
 
